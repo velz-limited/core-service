@@ -1,0 +1,32 @@
+server:
+  port: 8080
+  time_zone: UTC
+  shutdown: graceful
+  tomcat:
+    max-swallow-size: ${spring.servlet.multipart.max-file-size}
+
+spring:
+  lifecycle:
+    timeout-per-shutdown-phase: 60s
+  task:
+    execution:
+      shutdown:
+        await-termination: true
+        await-termination-period: ${spring.lifecycle.timeout-per-shutdown-phase}
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: ${spring.servlet.multipart.max-file-size}
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: "jdbc:postgresql://localhost:5432/core"
+    username: "postgres"
+    password: "postgres"
+  liquibase:
+    enabled: true
+    change-log: classpath:/db/main-changelog.yml
+  jpa:
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: ${server.time_zone}
