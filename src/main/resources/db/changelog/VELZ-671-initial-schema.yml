@@ -1,0 +1,879 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: mjah
+      changes:
+        # Users
+        - createTable:
+            tableName: users # The word 'user' is a reserved keyword in Postgres, using 'users' instead.
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: pk_user
+              - column:
+                  name: username
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: email
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: display_name
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: password
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: is_verified
+                  type: boolean
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+              - column:
+                  name: verification_attempt
+                  type: timestamp with time zone
+              - column:
+                  name: is_locked
+                  type: boolean
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+              - column:
+                  name: is_private
+                  type: boolean
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+              - column:
+                  name: last_signed_in
+                  type: timestamp with time zone
+              - column:
+                  name: profile_image_url
+                  type: text
+              - column:
+                  name: social_links
+                  type: jsonb
+              - column:
+                  name: created_at
+                  type: timestamp with time zone
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_by
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: last_modified_at
+                  type: timestamp with time zone
+                  constraints:
+                    nullable: false
+              - column:
+                  name: last_modified_by
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: deleted_at
+                  type: timestamp with time zone
+              - column:
+                  name: deleted_by
+                  type: uuid
+        - sql:
+            sql: ALTER TABLE users ADD CONSTRAINT uq_user_username UNIQUE NULLS NOT DISTINCT (username, deleted_at)
+        - sql:
+            sql: ALTER TABLE users ADD CONSTRAINT uq_user_email UNIQUE NULLS NOT DISTINCT (email, deleted_at)
+
+        - createTable:
+            tableName: friend
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: pk_friend
+              - column:
+                  name: from_user_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: to_user_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: last_interacted
+                  type: timestamp with time zone
+                  constraints:
+                    nullable: false
+              - column:
+                  name: interaction_score
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp with time zone
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_by
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: last_modified_at
+                  type: timestamp with time zone
+                  constraints:
+                    nullable: false
+              - column:
+                  name: last_modified_by
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: deleted_at
+                  type: timestamp with time zone
+              - column:
+                  name: deleted_by
+                  type: uuid
+        - sql:
+            sql: ALTER TABLE friend ADD CONSTRAINT uq_friend_from_to UNIQUE NULLS NOT DISTINCT (from_user_id, to_user_id, deleted_at)
+        - createIndex:
+            indexName: ix_friend_from_user
+            tableName: friend
+            columns:
+              - column:
+                  name: from_user_id
+              - column:
+                  name: last_interacted
+                  descending: true
+              - column:
+                  name: interaction_score
+                  descending: true
+        - createIndex:
+            indexName: ix_friend_to_user
+            tableName: friend
+            columns:
+              - column:
+                  name: to_user_id
+              - column:
+                  name: last_interacted
+                  descending: true
+              - column:
+                  name: interaction_score
+                  descending: true
+        # /Users
+
+        # Locations
+        - createTable:
+            tableName: country
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: pk_country
+              - column:
+                  name: name
+                  type: text
+                  constraints:
+                    nullable: false
+                    unique: true
+                    uniqueConstraintName: uq_country_name
+              - column:
+                  name: alpha3_code
+                  type: char(3)
+                  constraints:
+                    nullable: false
+                    unique: true
+                    uniqueConstraintName: uq_country_alpha3_code
+              - column:
+                  name: calling_code
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: currency_code
+                  type: char(3)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: text
+              - column:
+                  name: boundary
+                  type: polygon
+              - column:
+                  name: flag_image_url
+                  type: text
+              - column:
+                  name: main_image_url
+                  type: text
+
+        - createTable:
+            tableName: region
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: pk_region
+              - column:
+                  name: country_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_region_country
+                    referencedTableName: country
+                    referencedColumnNames: id
+              - column:
+                  name: name
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: tz_identifier
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: text
+              - column:
+                  name: boundary
+                  type: polygon
+              - column:
+                  name: main_image_url
+                  type: text
+        - addUniqueConstraint:
+            constraintName: uq_region_country_name
+            tableName: region
+            columnNames: country_id, name
+
+        - createTable:
+            tableName: area
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: pk_area
+              - column:
+                  name: region_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_area_region
+                    referencedTableName: region
+                    referencedColumnNames: id
+              - column:
+                  name: name
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: is_active
+                  type: boolean
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+              - column:
+                  name: centre_coordinate
+                  type: point
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: text
+              - column:
+                  name: morning_description
+                  type: text
+              - column:
+                  name: afternoon_description
+                  type: text
+              - column:
+                  name: evening_description
+                  type: text
+              - column:
+                  name: night_description
+                  type: text
+              - column:
+                  name: boundary
+                  type: polygon
+              - column:
+                  name: main_image_url
+                  type: text
+              - column:
+                  name: hashtags
+                  type: jsonb
+        - addUniqueConstraint:
+            constraintName: uq_area_region_name
+            tableName: area
+            columnNames: region_id, name
+        # /Locations
+
+        # Attractions
+        - createTable:
+            tableName: attraction_type
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: pk_attraction_type
+              - column:
+                  name: name
+                  type: text
+                  constraints:
+                    nullable: false
+                    unique: true
+                    uniqueConstraintName: uq_attraction_type_name
+              - column:
+                  name: map_image_url
+                  type: text
+              - column:
+                  name: info_image_url
+                  type: text
+
+        - createTable:
+            tableName: attraction
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: pk_attraction
+              - column:
+                  name: attraction_type_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_attraction_type
+                    referencedTableName: attraction_type
+                    referencedColumnNames: id
+              - column:
+                  name: area_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_attraction_area
+                    referencedTableName: area
+                    referencedColumnNames: id
+              - column:
+                  name: name
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: is_active
+                  type: boolean
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+              - column:
+                  name: coordinate
+                  type: point
+                  constraints:
+                    nullable: false
+              - column:
+                  name: address
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: text
+              - column:
+                  name: opening_times
+                  type: jsonb
+              - column:
+                  name: min_exploration_time
+                  type: interval
+              - column:
+                  name: max_exploration_time
+                  type: interval
+              - column:
+                  name: website_url
+                  type: text
+              - column:
+                  name: facts
+                  type: jsonb
+              - column:
+                  name: history
+                  type: jsonb
+              - column:
+                  name: accessibility
+                  type: jsonb
+              - column:
+                  name: recommendations
+                  type: jsonb
+              - column:
+                  name: main_image_url
+                  type: text
+        - createIndex:
+            indexName: ix_attraction_type
+            tableName: attraction
+            columns:
+              - column:
+                  name: attraction_type_id
+        - createIndex:
+            indexName: ix_attraction_area
+            tableName: attraction
+            columns:
+              - column:
+                  name: area_id
+        - createIndex:
+            indexName: ix_attraction_active
+            tableName: attraction
+            columns:
+              - column:
+                  name: is_active
+        # /Attractions
+
+        # Bookings
+        - createTable:
+            tableName: booking_type
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: pk_booking_type
+              - column:
+                  name: name
+                  type: text
+                  constraints:
+                    nullable: false
+                    unique: true
+                    uniqueConstraintName: uq_booking_type_name
+              - column:
+                  name: map_image_url
+                  type: text
+              - column:
+                  name: info_image_url
+                  type: text
+
+        - createTable:
+            tableName: booking
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: pk_booking
+              - column:
+                  name: booking_type_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_booking_type
+                    referencedTableName: booking_type
+                    referencedColumnNames: id
+              - column:
+                  name: area_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_booking_area
+                    referencedTableName: area
+                    referencedColumnNames: id
+              - column:
+                  name: name
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: is_active
+                  type: boolean
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+              - column:
+                  name: coordinate
+                  type: point
+                  constraints:
+                    nullable: false
+              - column:
+                  name: address
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: text
+              - column:
+                  name: opening_times
+                  type: jsonb
+              - column:
+                  name: website_url
+                  type: text
+              - column:
+                  name: currency_country_id
+                  type: uuid
+              - column:
+                  name: price_per_person
+                  type: numeric
+        - createIndex:
+            indexName: ix_booking_type
+            tableName: booking
+            columns:
+              - column:
+                  name: booking_type_id
+        - createIndex:
+            indexName: ix_booking_area
+            tableName: booking
+            columns:
+              - column:
+                  name: area_id
+        - createIndex:
+            indexName: ix_booking_active
+            tableName: booking
+            columns:
+              - column:
+                  name: is_active
+        # /Bookings
+
+        # History - despite the name, will include future events as well, as eventually that will become history...
+        - createTable:
+            tableName: region_history
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: pk_region_history
+              - column:
+                  name: user_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: region_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_region_history_region
+                    referencedTableName: region
+                    referencedColumnNames: id
+              - column:
+                  name: is_manual
+                  type: boolean
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: start_time
+                  type: timestamp with time zone
+                  constraints:
+                    nullable: false
+              - column:
+                  name: end_time
+                  type: timestamp with time zone
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp with time zone
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_by
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: last_modified_at
+                  type: timestamp with time zone
+                  constraints:
+                    nullable: false
+              - column:
+                  name: last_modified_by
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: deleted_at
+                  type: timestamp with time zone
+              - column:
+                  name: deleted_by
+                  type: uuid
+        - createIndex:
+            indexName: ix_region_history_user
+            tableName: region_history
+            columns:
+              - column:
+                  name: user_id
+              - column:
+                  name: status
+              - column:
+                  name: start_time
+                  descending: true
+              - column:
+                  name: end_time
+                  descending: true
+
+        - createTable:
+            tableName: attraction_history
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: pk_attraction_history
+              - column:
+                  name: user_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: attraction_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_attraction_history_attraction
+                    referencedTableName: attraction
+                    referencedColumnNames: id
+              - column:
+                  name: is_manual
+                  type: boolean
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: start_time
+                  type: timestamp with time zone
+                  constraints:
+                    nullable: false
+              - column:
+                  name: end_time
+                  type: timestamp with time zone
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp with time zone
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_by
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: last_modified_at
+                  type: timestamp with time zone
+                  constraints:
+                    nullable: false
+              - column:
+                  name: last_modified_by
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: deleted_at
+                  type: timestamp with time zone
+              - column:
+                  name: deleted_by
+                  type: uuid
+        - createIndex:
+            indexName: ix_attraction_history_user
+            tableName: attraction_history
+            columns:
+              - column:
+                  name: user_id
+              - column:
+                  name: status
+              - column:
+                  name: start_time
+                  descending: true
+              - column:
+                  name: end_time
+                  descending: true
+
+        - createTable:
+            tableName: booking_history
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: pk_booking_history
+              - column:
+                  name: user_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: booking_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_booking_history_booking
+                    referencedTableName: booking
+                    referencedColumnNames: id
+              - column:
+                  name: is_manual
+                  type: boolean
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: start_time
+                  type: timestamp with time zone
+                  constraints:
+                    nullable: false
+              - column:
+                  name: end_time
+                  type: timestamp with time zone
+                  constraints:
+                    nullable: false
+              - column:
+                  name: details
+                  type: text
+              - column:
+                  name: created_at
+                  type: timestamp with time zone
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_by
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: last_modified_at
+                  type: timestamp with time zone
+                  constraints:
+                    nullable: false
+              - column:
+                  name: last_modified_by
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: deleted_at
+                  type: timestamp with time zone
+              - column:
+                  name: deleted_by
+                  type: uuid
+        - createIndex:
+            indexName: ix_booking_history_user
+            tableName: booking_history
+            columns:
+              - column:
+                  name: user_id
+              - column:
+                  name: status
+              - column:
+                  name: start_time
+                  descending: true
+              - column:
+                  name: end_time
+                  descending: true
+
+        - createTable:
+            tableName: pinpoint_history
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: pk_pinpoint_history
+              - column:
+                  name: user_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: coordinate
+                  type: point
+                  constraints:
+                    nullable: false
+              - column:
+                  name: altitude
+                  type: numeric
+              - column:
+                  name: visit_time
+                  type: timestamp with time zone
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp with time zone
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_by
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: last_modified_at
+                  type: timestamp with time zone
+                  constraints:
+                    nullable: false
+              - column:
+                  name: last_modified_by
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: deleted_at
+                  type: timestamp with time zone
+              - column:
+                  name: deleted_by
+                  type: uuid
+        - createIndex:
+            indexName: ix_pinpoint_history_user
+            tableName: pinpoint_history
+            columns:
+              - column:
+                  name: user_id
+              - column:
+                  name: visit_time
+                  descending: true
+        # /History
