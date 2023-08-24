@@ -30,3 +30,7 @@ spring:
       hibernate:
         jdbc:
           time_zone: ${server.time_zone}
+
+springdoc:
+  swagger-ui:
+    enabled: false
