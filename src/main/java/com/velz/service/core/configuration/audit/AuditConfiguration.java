@@ -1,5 +1,6 @@
 package com.velz.service.core.configuration.audit;
 
+import com.velz.service.core.configuration.helpers.SecurityContextHelper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.auditing.DateTimeProvider;
@@ -21,7 +22,6 @@ public class AuditConfiguration {
 
     @Bean
     public AuditorAware<UUID> auditorAware() {
-        // TODO J: Get actual user.
-        return () -> Optional.of(UUID.randomUUID());
+        return () -> Optional.ofNullable(SecurityContextHelper.getAuthenticatedPrincipal());
     }
 }

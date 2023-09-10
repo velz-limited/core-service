@@ -1,5 +1,6 @@
 package com.velz.service.core.configuration.audit;
 
+import com.velz.service.core.configuration.helpers.SecurityContextHelper;
 import lombok.NonNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.NoRepositoryBean;
@@ -13,12 +14,16 @@ public interface AuditJpaRepository<T extends AuditEntity, I> extends JpaReposit
 
     default void softDelete(@NonNull T entity) {
         entity.setDeletedAt(now());
-        // TODO J: Get actual user.
-        entity.setDeletedById(UUID.randomUUID());
-        save(entity);
+        entity.setDeletedById(SecurityContextHelper.getAuthenticatedPrincipal());
     }
 
-    default void softDeleteById(@NonNull I entityId) {
-        softDelete(findById(entityId).orElseThrow());
+    default void softDelete(@NonNull T entity, I deletedById) {
+        entity.setDeletedAt(now());
+        entity.setDeletedById((UUID) deletedById);
+    }
+
+    // TODO J: Don't load entity when deleting by id.
+    default void softDeleteById(@NonNull I entityId, I deletedById) {
+        softDelete(findById(entityId).orElseThrow(), deletedById);
     }
 }

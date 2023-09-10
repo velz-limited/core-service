@@ -1,3 +1,8 @@
+server:
+  error:
+    include-message: always
+    include-binding-errors: on-param
+
 springdoc:
   swagger-ui:
     enabled: true
