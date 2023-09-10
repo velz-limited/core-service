@@ -3,6 +3,8 @@ package com.velz.service.core.user;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.velz.service.core.configuration.audit.AuditEntity;
+import com.velz.service.core.configuration.security.jwt.JWTUserClaims;
+import com.velz.service.core.configuration.security.principal.UserRole;
 import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -19,7 +21,7 @@ import static com.velz.service.core.configuration.audit.AuditEntity.AE_DELETE_IS
 @Entity
 @Table(name = "users")
 @Where(clause = AE_DELETE_IS_NULL)
-public class User extends AuditEntity {
+public class User extends AuditEntity implements JWTUserClaims {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -92,4 +94,34 @@ public class User extends AuditEntity {
     @Type(JsonType.class)
     @Column(name = "social_links")
     private JsonNode socialLinks;
+
+    public UserRole getRole() {
+        if (getId() == null) {
+            return UserRole.GUEST;
+        }
+
+        if (getDeletedAt() != null) {
+            return UserRole.DELETED;
+        }
+
+        if (isLocked()) {
+            return UserRole.LOCKED;
+        }
+
+        return UserRole.STANDARD;
+    }
+
+    /* JWTUserClaims */
+    @JsonIgnore
+    @Override
+    public String getIdString() {
+        return getId().toString();
+    }
+
+    @JsonIgnore
+    @Override
+    public String getRoleString() {
+        return getRole().name();
+    }
+    /* /JWTUserClaims */
 }

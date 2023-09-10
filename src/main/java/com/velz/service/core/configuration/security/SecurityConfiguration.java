@@ -1,4 +1,4 @@
-package com.velz.service.core.configuration;
+package com.velz.service.core.configuration.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
