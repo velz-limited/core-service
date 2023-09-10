@@ -35,7 +35,7 @@ public class BookingHistory extends AuditEntity {
     private Booking booking;
 
     @Column(name = "is_manual")
-    private boolean manual;
+    private boolean isManual;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")

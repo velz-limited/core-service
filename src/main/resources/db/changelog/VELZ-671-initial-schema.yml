@@ -14,6 +14,11 @@ databaseChangeLog:
                     primaryKey: true
                     primaryKeyName: pk_user
               - column:
+                  name: display_name
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
                   name: username
                   type: text
                   constraints:
@@ -24,24 +29,53 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: display_name
-                  type: text
-                  constraints:
-                    nullable: false
-              - column:
-                  name: password
-                  type: text
-                  constraints:
-                    nullable: false
-              - column:
-                  name: is_verified
+                  name: is_email_verified
                   type: boolean
                   defaultValueBoolean: false
                   constraints:
                     nullable: false
               - column:
-                  name: verification_attempted_at
+                  name: email_verifications
+                  type: jsonb
+              - column:
+                  name: password
+                  type: text
+              - column:
+                  name: password_resets
+                  type: jsonb
+              - column:
+                  name: google_id
+                  type: text
+                  constraints:
+                    unique: true
+                    uniqueConstraintName: uq_user_google
+              - column:
+                  name: facebook_id
+                  type: text
+                  constraints:
+                    unique: true
+                    uniqueConstraintName: uq_user_facebook
+              - column:
+                  name: apple_id
+                  type: text
+                  constraints:
+                    unique: true
+                    uniqueConstraintName: uq_user_apple
+              - column:
+                  name: github_id
+                  type: text
+                  constraints:
+                    unique: true
+                    uniqueConstraintName: uq_user_github
+              - column:
+                  name: last_signed_in_at
                   type: timestamp with time zone
+              - column:
+                  name: session_tokens
+                  type: jsonb
+              - column:
+                  name: failed_sign_ins
+                  type: jsonb
               - column:
                   name: is_locked
                   type: boolean
@@ -54,9 +88,6 @@ databaseChangeLog:
                   defaultValueBoolean: false
                   constraints:
                     nullable: false
-              - column:
-                  name: last_signed_in_at
-                  type: timestamp with time zone
               - column:
                   name: profile_image_uri
                   type: text

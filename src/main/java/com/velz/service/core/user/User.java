@@ -25,33 +25,66 @@ public class User extends AuditEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @Column(name = "display_name")
+    private String displayName;
+
     @Column(name = "username")
     private String username;
 
     @Column(name = "email")
     private String email;
 
-    @Column(name = "display_name")
-    private String displayName;
+    @JsonIgnore
+    @Type(JsonType.class)
+    @Column(name = "email_verifications")
+    private JsonNode emailVerifications;
+
+    @Column(name = "is_email_verified")
+    private boolean isEmailVerified;
 
     @JsonIgnore
     @Column(name = "password")
     private String password;
 
-    @Column(name = "is_verified")
-    private boolean verified;
+    @JsonIgnore
+    @Type(JsonType.class)
+    @Column(name = "password_resets")
+    private JsonNode passwordResets;
 
-    @Column(name = "verification_attempted_at")
-    private ZonedDateTime verificationAttemptedAt;
+    @JsonIgnore
+    @Column(name = "google_id")
+    private String googleId;
 
-    @Column(name = "is_locked")
-    private boolean locked;
+    @JsonIgnore
+    @Column(name = "facebook_id")
+    private String facebookId;
 
-    @Column(name = "is_private")
-    private boolean privateUser; // The word 'private' is reserved, using 'privateUser' instead.
+    @JsonIgnore
+    @Column(name = "apple_id")
+    private String appleId;
+
+    @JsonIgnore
+    @Column(name = "github_id")
+    private String githubId;
 
     @Column(name = "last_signed_in_at")
     private ZonedDateTime lastSignedInAt;
+
+    @JsonIgnore
+    @Type(JsonType.class)
+    @Column(name = "session_tokens")
+    private JsonNode sessionTokens;
+
+    @JsonIgnore
+    @Type(JsonType.class)
+    @Column(name = "failed_sign_ins")
+    private JsonNode failedSignIns;
+
+    @Column(name = "is_locked")
+    private boolean isLocked;
+
+    @Column(name = "is_private")
+    private boolean isPrivate;
 
     @Column(name = "profile_image_uri")
     private URI profileImageUri;

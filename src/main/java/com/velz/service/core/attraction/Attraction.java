@@ -40,7 +40,7 @@ public class Attraction {
     private String name;
 
     @Column(name = "is_active")
-    private boolean active;
+    private boolean isActive;
 
     @Column(name = "coordinate")
     private Point<G2D> coordinate;
