@@ -14,9 +14,14 @@ import jakarta.persistence.Table;
 import lombok.Data;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.Where;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.net.URI;
 import java.time.ZonedDateTime;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
 import java.util.UUID;
 
 import static com.velz.service.core.configuration.audit.AuditEntity.AE_DELETE_IS_NULL;
@@ -25,7 +30,7 @@ import static com.velz.service.core.configuration.audit.AuditEntity.AE_DELETE_IS
 @Entity
 @Table(name = "users")
 @Where(clause = AE_DELETE_IS_NULL)
-public class User extends AuditEntity implements JWTUserClaims {
+public class User extends AuditEntity implements JWTUserClaims, OAuth2User {
 
     @Id
     @RandomUuidGenerator
@@ -128,4 +133,24 @@ public class User extends AuditEntity implements JWTUserClaims {
         return getRole().name();
     }
     /* /JWTUserClaims */
+
+    /* OAuth2User */
+    @JsonIgnore
+    @Override
+    public Map<String, Object> getAttributes() {
+        return Collections.emptyMap();
+    }
+
+    @JsonIgnore
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return Collections.singletonList(getRole().getAuthority());
+    }
+
+    @JsonIgnore
+    @Override
+    public String getName() {
+        return getDisplayName();
+    }
+    /* /OAuth2User */
 }

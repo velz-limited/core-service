@@ -7,6 +7,8 @@ import org.springframework.stereotype.Component;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Component
@@ -14,6 +16,7 @@ import java.time.Duration;
 public class AppProperties {
 
     private Jwt jwt = new Jwt();
+    private OAuth2 oauth2 = new OAuth2();
 
     @Data
     public static class Jwt {
@@ -40,5 +43,10 @@ public class AppProperties {
             private Boolean cookies = true;
             private Boolean body = false;
         }
+    }
+
+    @Data
+    public static class OAuth2 {
+        private List<String> authorizedRedirectUris = new ArrayList<>();
     }
 }

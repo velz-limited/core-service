@@ -1,5 +1,6 @@
 package com.velz.service.core.configuration.helpers;
 
+import com.velz.service.core.user.User;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -42,6 +43,12 @@ public class SecurityContextHelper {
             return null;
         }
 
-        return (UUID) authentication.getPrincipal();
+        Object principal = authentication.getPrincipal();
+
+        if (principal instanceof User user) { // TODO J: Avoid referencing non-helper related objects.
+            return user.getId();
+        }
+
+        return (UUID) principal;
     }
 }

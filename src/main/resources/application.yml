@@ -30,6 +30,17 @@ spring:
       hibernate:
         jdbc:
           time_zone: ${server.time_zone}
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ""
+            client-secret: ""
+          facebook:
+            client-id: ""
+            client-secret: ""
+          # TODO J: Add Apple as OAuth2 provider.
 
 springdoc:
   swagger-ui:
@@ -53,3 +64,8 @@ app:
         cookies: true
         # Enabling will make token vulnerable to hijacking. Use cookies (with httpOnly) instead.
         body: false
+  oauth2:
+    authorized-redirect-uris: # TODO J: Update OAuth2 authorized redirect URIs.
+      - http://localhost:3000/oauth2/redirect
+      - iosapp://oauth2/redirect
+      - androidapp://oauth2/redirect
