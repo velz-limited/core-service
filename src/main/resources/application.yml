@@ -41,13 +41,15 @@ app:
     rsa_private_key: ""
     rsa_public_key: ""
     access_token:
-      expires: 5m # Recommended to keep this short (<10m).
+      # Recommended to keep this short (<10m).
+      expires: 5m
       transport:
         cookies: false
-        json_response: true
+        body: true
     refresh_token:
-      expires: 8h
-      expires_extended: 8760h
+      expires: 8760h
       transport:
+        # Required to refresh access tokens.
         cookies: true
-        json_response: false # Enabling will make token vulnerable to hijacking. Use cookies (with httpOnly) instead.
+        # Enabling will make token vulnerable to hijacking. Use cookies (with httpOnly) instead.
+        body: false

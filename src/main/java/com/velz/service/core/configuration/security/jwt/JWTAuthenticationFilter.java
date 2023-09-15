@@ -8,7 +8,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -17,10 +16,9 @@ import java.util.UUID;
 import static com.velz.service.core.configuration.helpers.RequestHelper.getBearerToken;
 import static com.velz.service.core.configuration.helpers.SecurityContextHelper.clearSecurityContext;
 import static com.velz.service.core.configuration.helpers.SecurityContextHelper.setSecurityContext;
-import static com.velz.service.core.configuration.security.jwt.JWTProvider.*;
+import static com.velz.service.core.configuration.security.jwt.JWTHelper.*;
 
 @Slf4j
-@Component
 public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
     @Override

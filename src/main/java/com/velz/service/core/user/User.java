@@ -7,7 +7,10 @@ import com.velz.service.core.configuration.generators.annotations.RandomUuidGene
 import com.velz.service.core.configuration.security.jwt.JWTUserClaims;
 import com.velz.service.core.configuration.security.principal.UserRole;
 import io.hypersistence.utils.hibernate.type.json.JsonType;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.Data;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.Where;

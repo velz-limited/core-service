@@ -31,15 +31,14 @@ public class AppProperties {
 
         @Data
         public static class RefreshToken {
-            private Duration expires = Duration.ofHours(8);
-            private Duration expiresExtended = Duration.ofHours(8760);
+            private Duration expires = Duration.ofHours(8760);
             private Transport transport = new Transport();
         }
 
         @Data
         public static class Transport {
-            private boolean cookies = true;
-            private boolean jsonResponse = false;
+            private Boolean cookies = true;
+            private Boolean body = false;
         }
     }
 }
