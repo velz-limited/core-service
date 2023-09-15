@@ -3,6 +3,7 @@ package com.velz.service.core.user;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.velz.service.core.configuration.audit.AuditEntity;
+import com.velz.service.core.configuration.generators.annotations.RandomUuidGenerator;
 import com.velz.service.core.configuration.security.jwt.JWTUserClaims;
 import com.velz.service.core.configuration.security.principal.UserRole;
 import io.hypersistence.utils.hibernate.type.json.JsonType;
@@ -24,7 +25,7 @@ import static com.velz.service.core.configuration.audit.AuditEntity.AE_DELETE_IS
 public class User extends AuditEntity implements JWTUserClaims {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @RandomUuidGenerator
     private UUID id;
 
     @Column(name = "display_name")
