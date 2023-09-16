@@ -16,4 +16,12 @@ public interface UserRepository extends AuditJpaRepository<User, UUID> {
     boolean existsByEmail(String email);
 
     Optional<User> findByEmail(String email);
+
+    Optional<User> findByGoogleId(String googleId);
+
+    Optional<User> findByFacebookId(String facebookId);
+
+    Optional<User> findByAppleId(String appleId);
+
+    Optional<User> findByGithubId(String githubId);
 }

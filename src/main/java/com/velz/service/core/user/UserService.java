@@ -4,13 +4,16 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.velz.service.core.configuration.helpers.SecurityContextHelper;
+import com.velz.service.core.configuration.security.oauth2.OAuth2Provider;
 import com.velz.service.core.user.document.SessionToken;
 import com.velz.service.core.user.request.*;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.ProviderNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -80,7 +83,33 @@ public class UserService {
     public Optional<User> findByUsername(String username) {
         return userRepository.findByUsername(username.toLowerCase());
     }
+
+    public Optional<User> findByGoogleId(String googleId) {
+        return userRepository.findByGoogleId(googleId);
+    }
+
+    public Optional<User> findByFacebookId(String facebookId) {
+        return userRepository.findByFacebookId(facebookId);
+    }
+
+    public Optional<User> findByAppleId(String appleId) {
+        return userRepository.findByAppleId(appleId);
+    }
+
+    public Optional<User> findByGithubId(String githubId) {
+        return userRepository.findByGithubId(githubId);
+    }
     /* /Getters and Finders */
+
+    /* Generate */
+    public String generateDisplayName() {
+        return "New User"; // TODO J: Generate nice random display name.
+    }
+
+    public String generateUsername() {
+        return RandomStringUtils.randomAlphanumeric(USERNAME_MAX); // TODO J: Generate nice random username.
+    }
+    /* /Generate */
 
     /* Granular Update */
     public void updateDisplayName(User user, String newDisplayName) {
@@ -295,4 +324,67 @@ public class UserService {
         userRepository.softDelete(user, user.getId());
     }
     /* /Modifications */
+
+    /* OAuth2 */
+    public Optional<User> oauth2findById(OAuth2Provider type, String id) {
+        if (type == OAuth2Provider.GOOGLE) {
+            return findByGoogleId(id);
+        } else if (type == OAuth2Provider.FACEBOOK) {
+            return findByFacebookId(id);
+        } else if (type == OAuth2Provider.GITHUB) {
+            return findByGithubId(id);
+        } else {
+            throw new ProviderNotFoundException("Provider " + (type != null ? type.getName() : "unknown") + " is not supported yet.");
+        }
+    }
+
+    public void updateOAuth2Provider(User user, OAuth2Provider type, String id) {
+        if (type == OAuth2Provider.GOOGLE) {
+            user.setGoogleId(id);
+        } else if (type == OAuth2Provider.FACEBOOK) {
+            user.setFacebookId(id);
+        } else if (type == OAuth2Provider.GITHUB) {
+            user.setGithubId(id);
+        } else {
+            throw new ProviderNotFoundException("Provider " + (type != null ? type.getName() : "unknown") + " is not supported yet.");
+        }
+    }
+
+    public void validateUserOAuth2SignUpRequest(UserOAuth2SignUpRequest request) {
+        Set<ConstraintViolation<UserOAuth2SignUpRequest>> violations = validator.validate(request);
+        if (!violations.isEmpty()) {
+            throw new ConstraintViolationException(violations);
+        }
+    }
+
+    public void validateUserOAuth2UpdateRequest(UserOAuth2UpdateRequest request) {
+        Set<ConstraintViolation<UserOAuth2UpdateRequest>> violations = validator.validate(request);
+        if (!violations.isEmpty()) {
+            throw new ConstraintViolationException(violations);
+        }
+    }
+
+    public User oauth2SignUp(UserOAuth2SignUpRequest request) {
+        validateUserOAuth2SignUpRequest(request);
+
+        User user = new User();
+        user.setId(UUID.randomUUID());
+        SecurityContextHelper.setSecurityContext(user.getId(), user.getAuthorities());
+
+        updateDisplayName(user, request.getDisplayName());
+        updateUsername(user, request.getUsername());
+        updateEmail(user, request.getEmail(), true);
+        updateOAuth2Provider(user, request.getProvider(), request.getId());
+        return save(user);
+    }
+
+    public User oauth2Update(User user, UserOAuth2UpdateRequest request) {
+        validateUserOAuth2UpdateRequest(request);
+
+        // Update email only. Leave display name and username alone.
+        updateEmail(user, request.getEmail(), true);
+        updateOAuth2Provider(user, request.getProvider(), request.getId());
+        return save(user);
+    }
+    /* /OAuth2 */
 }

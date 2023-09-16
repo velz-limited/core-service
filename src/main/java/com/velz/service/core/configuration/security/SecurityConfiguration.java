@@ -1,6 +1,11 @@
 package com.velz.service.core.configuration.security;
 
 import com.velz.service.core.configuration.security.jwt.JWTAuthenticationFilter;
+import com.velz.service.core.configuration.security.oauth2.OAuth2AuthenticationFailureHandler;
+import com.velz.service.core.configuration.security.oauth2.OAuth2AuthenticationSuccessHandler;
+import com.velz.service.core.configuration.security.oauth2.OAuth2AuthorizationRequestRepository;
+import com.velz.service.core.configuration.security.oauth2.OAuth2UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -19,6 +24,18 @@ import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 @Configuration
 public class SecurityConfiguration {
 
+    @Autowired
+    private OAuth2AuthorizationRequestRepository oauth2AuthorizationRequestRepository;
+
+    @Autowired
+    private OAuth2UserService oauth2UserService;
+
+    @Autowired
+    private OAuth2AuthenticationSuccessHandler oauth2AuthenticationSuccessHandler;
+
+    @Autowired
+    private OAuth2AuthenticationFailureHandler oauth2AuthenticationFailureHandler;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -36,6 +53,12 @@ public class SecurityConfiguration {
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(new JWTAuthenticationFilter(), OAuth2AuthorizationRequestRedirectFilter.class)
+                .oauth2Login(c -> c
+                        .authorizationEndpoint(sc -> sc.authorizationRequestRepository(oauth2AuthorizationRequestRepository))
+                        .userInfoEndpoint(sc -> sc.userService(oauth2UserService))
+                        .successHandler(oauth2AuthenticationSuccessHandler)
+                        .failureHandler(oauth2AuthenticationFailureHandler)
+                )
                 .exceptionHandling(c -> c
                         .authenticationEntryPoint(new HttpStatusEntryPoint(UNAUTHORIZED))
                 );
