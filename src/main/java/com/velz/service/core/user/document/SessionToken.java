@@ -1,6 +1,6 @@
 package com.velz.service.core.user.document;
 
-import com.velz.service.core.configuration.security.jwt.JWTType;
+import com.velz.service.core._base.security.jwt.JWTType;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import jakarta.validation.constraints.NotBlank;
@@ -15,8 +15,8 @@ import java.security.MessageDigest;
 import java.util.Base64;
 import java.util.Date;
 
-import static com.velz.service.core.configuration.security.jwt.JWTHelper.parseClaims;
-import static com.velz.service.core.configuration.security.jwt.JWTHelper.validateClaims;
+import static com.velz.service.core._base.security.jwt.JWTHelper.parseClaims;
+import static com.velz.service.core._base.security.jwt.JWTHelper.validateClaims;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 @Getter

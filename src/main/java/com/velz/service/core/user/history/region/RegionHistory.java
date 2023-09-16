@@ -1,6 +1,6 @@
 package com.velz.service.core.user.history.region;
 
-import com.velz.service.core.configuration.audit.AuditEntity;
+import com.velz.service.core._base.audit.AuditEntity;
 import com.velz.service.core.location.region.Region;
 import com.velz.service.core.user.User;
 import jakarta.persistence.*;
@@ -11,7 +11,7 @@ import org.hibernate.annotations.Where;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import static com.velz.service.core.configuration.audit.AuditEntity.AE_DELETE_IS_NULL;
+import static com.velz.service.core._base.audit.AuditEntity.AE_DELETE_IS_NULL;
 
 @Data
 @Entity

@@ -2,10 +2,10 @@ package com.velz.service.core.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.velz.service.core.configuration.audit.AuditEntity;
-import com.velz.service.core.configuration.generators.annotations.RandomUuidGenerator;
-import com.velz.service.core.configuration.security.jwt.JWTUserClaims;
-import com.velz.service.core.configuration.security.principal.UserRole;
+import com.velz.service.core._base.audit.AuditEntity;
+import com.velz.service.core._base.generators.annotations.RandomUuidGenerator;
+import com.velz.service.core._base.security.jwt.JWTUserClaims;
+import com.velz.service.core._base.security.principal.UserRole;
 import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -24,7 +24,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.UUID;
 
-import static com.velz.service.core.configuration.audit.AuditEntity.AE_DELETE_IS_NULL;
+import static com.velz.service.core._base.audit.AuditEntity.AE_DELETE_IS_NULL;
 
 @Data
 @Entity

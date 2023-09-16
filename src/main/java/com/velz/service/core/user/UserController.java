@@ -1,7 +1,7 @@
 package com.velz.service.core.user;
 
-import com.velz.service.core.configuration.security.jwt.JWTHelper;
-import com.velz.service.core.configuration.security.jwt.JWTType;
+import com.velz.service.core._base.security.jwt.JWTHelper;
+import com.velz.service.core._base.security.jwt.JWTType;
 import com.velz.service.core.user.request.*;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import static com.velz.service.core.configuration.security.jwt.JWTHelper.*;
+import static com.velz.service.core._base.security.jwt.JWTHelper.*;
 import static com.velz.service.core.user.document.SessionToken.buildSessionToken;
 import static com.velz.service.core.user.document.SessionToken.hashToken;
 import static java.time.ZonedDateTime.now;

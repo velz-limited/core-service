@@ -1,6 +1,6 @@
 package com.velz.service.core.user.request;
 
-import com.velz.service.core.configuration.security.oauth2.OAuth2Provider;
+import com.velz.service.core._base.security.oauth2.OAuth2Provider;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;

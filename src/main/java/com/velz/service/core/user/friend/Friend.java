@@ -1,6 +1,6 @@
 package com.velz.service.core.user.friend;
 
-import com.velz.service.core.configuration.audit.AuditEntity;
+import com.velz.service.core._base.audit.AuditEntity;
 import com.velz.service.core.user.User;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -10,7 +10,7 @@ import org.hibernate.annotations.Where;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
-import static com.velz.service.core.configuration.audit.AuditEntity.AE_DELETE_IS_NULL;
+import static com.velz.service.core._base.audit.AuditEntity.AE_DELETE_IS_NULL;
 
 @Data
 @Entity
