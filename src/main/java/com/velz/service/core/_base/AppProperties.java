@@ -15,8 +15,17 @@ import java.util.List;
 @ConfigurationProperties("app")
 public class AppProperties {
 
+    private Cors cors = new Cors();
     private Jwt jwt = new Jwt();
     private OAuth2 oauth2 = new OAuth2();
+
+    @Data
+    public static class Cors {
+        private Boolean allowAllOrigins = false;
+        private List<String> allowOrigins = new ArrayList<>();
+        private Boolean allowCredentials = true;
+        private Duration maxAge = Duration.ofMinutes(10);
+    }
 
     @Data
     public static class Jwt {

@@ -17,3 +17,7 @@ spring:
           github:
             client-id: ""
             client-secret: ""
+
+app:
+  cors:
+    allow_all_origins: true

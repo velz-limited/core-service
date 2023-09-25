@@ -1,5 +1,6 @@
 package com.velz.service.core._base.security;
 
+import com.velz.service.core._base.AppProperties;
 import com.velz.service.core._base.security.jwt.JWTAuthenticationFilter;
 import com.velz.service.core._base.security.oauth2.OAuth2AuthenticationFailureHandler;
 import com.velz.service.core._base.security.oauth2.OAuth2AuthenticationSuccessHandler;
@@ -16,13 +17,22 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestRedirectFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
 
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
+import static org.springframework.security.config.Customizer.withDefaults;
 
 @EnableMethodSecurity
 @EnableWebSecurity
 @Configuration
 public class SecurityConfiguration {
+
+    @Autowired
+    private AppProperties appProperties;
 
     @Autowired
     private OAuth2AuthorizationRequestRepository oauth2AuthorizationRequestRepository;
@@ -37,9 +47,27 @@ public class SecurityConfiguration {
     private OAuth2AuthenticationFailureHandler oauth2AuthenticationFailureHandler;
 
     @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedHeaders(List.of("*"));
+        configuration.setAllowedMethods(List.of("*"));
+        configuration.setAllowCredentials(appProperties.getCors().getAllowCredentials());
+        configuration.setMaxAge(appProperties.getCors().getMaxAge());
+        if (Boolean.TRUE.equals(appProperties.getCors().getAllowAllOrigins())) {
+            configuration.setAllowedOriginPatterns(List.of("*"));
+        } else {
+            configuration.setAllowedOrigins(appProperties.getCors().getAllowOrigins());
+        }
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
+
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .sessionManagement(c -> c.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .cors(withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
