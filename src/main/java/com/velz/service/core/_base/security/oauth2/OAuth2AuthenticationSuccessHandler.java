@@ -18,7 +18,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.net.URI;
@@ -50,6 +49,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         String targetUrl = determineTargetUrl(request, tokens);
 
         JWTHelper.addTokensToCookies(response, tokens);
+        JWTHelper.forceAddAccessTokenToCookiesNoHttpOnly(response, tokens);
 
         SessionToken sessionToken = buildSessionToken(tokens.get(JWTType.REFRESH));
         userService.addSessionToken(user, sessionToken);
@@ -71,16 +71,12 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid redirect URI.");
         }
 
-        String targetUrl = redirectUri.orElse(getDefaultTargetUrl());
-
-        return UriComponentsBuilder.fromUriString(targetUrl)
-                .queryParam(JWTType.ACCESS.getSnakeName(), tokens.get(JWTType.ACCESS))
-                .build().toUriString();
+        return redirectUri.orElse(getDefaultTargetUrl());
     }
 
     protected void clearAuthenticationAttributes(HttpServletRequest request, HttpServletResponse response) {
         super.clearAuthenticationAttributes(request);
-        oauth2AuthorizationRequestRepository.removeAuthorizationRequest(request, response);
+        oauth2AuthorizationRequestRepository.removeAuthorizationRequestCookies(request, response);
     }
 
     private boolean isAuthorizedRedirectUri(String uri) {

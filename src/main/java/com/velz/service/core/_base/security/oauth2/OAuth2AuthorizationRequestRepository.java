@@ -28,8 +28,7 @@ public class OAuth2AuthorizationRequestRepository implements AuthorizationReques
     @Override
     public void saveAuthorizationRequest(OAuth2AuthorizationRequest authorizationRequest, HttpServletRequest request, HttpServletResponse response) {
         if (authorizationRequest == null) {
-            CookiesHelper.deleteCookie(request, response, OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME);
-            CookiesHelper.deleteCookie(request, response, REDIRECT_URI_PARAM_COOKIE_NAME);
+            removeAuthorizationRequestCookies(request, response);
             return;
         }
 
@@ -42,9 +41,11 @@ public class OAuth2AuthorizationRequestRepository implements AuthorizationReques
 
     @Override
     public OAuth2AuthorizationRequest removeAuthorizationRequest(HttpServletRequest request, HttpServletResponse response) {
-        OAuth2AuthorizationRequest authorizationRequest = this.loadAuthorizationRequest(request);
+        return this.loadAuthorizationRequest(request);
+    }
+
+    public void removeAuthorizationRequestCookies(HttpServletRequest request, HttpServletResponse response) {
         CookiesHelper.deleteCookie(request, response, OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME);
         CookiesHelper.deleteCookie(request, response, REDIRECT_URI_PARAM_COOKIE_NAME);
-        return authorizationRequest;
     }
 }

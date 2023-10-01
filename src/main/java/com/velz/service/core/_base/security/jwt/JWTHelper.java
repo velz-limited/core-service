@@ -103,12 +103,21 @@ public class JWTHelper {
         return true;
     }
 
+    public static void forceAddAccessTokenToCookiesNoHttpOnly(HttpServletResponse response, Map<JWTType, String> tokens) {
+        String accessToken = tokens.get(JWTType.ACCESS);
+        if (StringUtils.isNotEmpty(accessToken)) {
+            Duration duration = getAppProperties().getJwt().getAccessToken().getExpires();
+            CookiesHelper.addCookieNoHttpOnly(response, JWTType.ACCESS.getSnakeName(), accessToken, duration);
+        }
+    }
+
     public static void addTokensToCookies(HttpServletResponse response, Map<JWTType, String> tokens) {
         String refreshToken = tokens.get(JWTType.REFRESH);
         if (StringUtils.isNotEmpty(refreshToken)) {
             AppProperties.Jwt.Transport refreshTokenTransport = getAppProperties().getJwt().getRefreshToken().getTransport();
             if (Boolean.TRUE.equals(refreshTokenTransport.getCookies())) {
-                CookiesHelper.addCookieNoExpiry(response, JWTType.REFRESH.getSnakeName(), refreshToken);
+                Duration duration = getAppProperties().getJwt().getRefreshToken().getExpires();
+                CookiesHelper.addCookie(response, JWTType.REFRESH.getSnakeName(), refreshToken, duration);
             }
         }
 
@@ -116,7 +125,8 @@ public class JWTHelper {
         if (StringUtils.isNotEmpty(accessToken)) {
             AppProperties.Jwt.Transport accessTokenTransport = getAppProperties().getJwt().getAccessToken().getTransport();
             if (Boolean.TRUE.equals(accessTokenTransport.getCookies())) {
-                CookiesHelper.addCookieNoExpiry(response, JWTType.ACCESS.getSnakeName(), accessToken);
+                Duration duration = getAppProperties().getJwt().getAccessToken().getExpires();
+                CookiesHelper.addCookie(response, JWTType.ACCESS.getSnakeName(), accessToken, duration);
             }
         }
     }

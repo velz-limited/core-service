@@ -27,17 +27,25 @@ public class CookiesHelper {
         return Optional.empty();
     }
 
-    public static void addCookie(HttpServletResponse response, String name, String value, Duration maxAge) {
+    public static void addCookie(HttpServletResponse response, String name, String value, Duration maxAge, boolean httpOnly) {
         Cookie cookie = new Cookie(name, value);
         cookie.setPath("/");
-        cookie.setHttpOnly(true);
+        cookie.setHttpOnly(httpOnly);
         cookie.setSecure(true);
         cookie.setMaxAge((int) maxAge.toSeconds());
         response.addCookie(cookie);
     }
 
+    public static void addCookie(HttpServletResponse response, String name, String value, Duration maxAge) {
+        addCookie(response, name, value, maxAge, true);
+    }
+
     public static void addCookieNoExpiry(HttpServletResponse response, String name, String value) {
         addCookie(response, name, value, Duration.ofSeconds(Integer.MAX_VALUE));
+    }
+
+    public static void addCookieNoHttpOnly(HttpServletResponse response, String name, String value, Duration maxAge) {
+        addCookie(response, name, value, maxAge, false);
     }
 
     public static void deleteCookie(HttpServletRequest request, HttpServletResponse response, String name) {
