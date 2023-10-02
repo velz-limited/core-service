@@ -25,7 +25,7 @@ public class OAuth2AuthenticationFailureHandler extends SimpleUrlAuthenticationF
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
         String targetUrl = CookiesHelper.getCookie(request, REDIRECT_URI_PARAM_COOKIE_NAME).map(Cookie::getValue).orElse("/");
-        targetUrl = UriComponentsBuilder.fromUriString(targetUrl).queryParam("error", exception.getLocalizedMessage()).build().toUriString();
+        targetUrl = UriComponentsBuilder.fromUriString(targetUrl).queryParam("error", "OAuth2 authentication failed.").build().toUriString();
 
         oauth2AuthorizationRequestRepository.removeAuthorizationRequestCookies(request, response);
         JWTHelper.deleteTokensFromCookies(request, response);

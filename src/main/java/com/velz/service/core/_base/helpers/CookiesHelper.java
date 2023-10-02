@@ -41,8 +41,9 @@ public class CookiesHelper {
         cookie.setPath("/");
         cookie.setHttpOnly(httpOnly);
         cookie.setMaxAge((int) maxAge.toSeconds());
-        setSecure(cookie);
         setDomain(cookie, request.getServerName());
+        setSecure(cookie);
+        setSameSite(cookie);
         response.addCookie(cookie);
     }
 
@@ -63,12 +64,7 @@ public class CookiesHelper {
         if (cookies != null) {
             for (Cookie cookie : cookies) {
                 if (cookie.getName().equals(name)) {
-                    cookie.setPath("/");
-                    cookie.setValue("");
-                    cookie.setMaxAge(0);
-                    setSecure(cookie);
-                    setDomain(cookie, request.getServerName());
-                    response.addCookie(cookie);
+                    addCookie(request, response, name, "", Duration.ZERO);
                 }
             }
         }
@@ -82,21 +78,32 @@ public class CookiesHelper {
         return cls.cast(SerializationUtils.deserialize(Base64.getUrlDecoder().decode(cookie.getValue())));
     }
 
-    private static void setSecure(Cookie cookie) {
-        cookie.setSecure(getAppProperties().getCookies().getSecure());
+    private static void setDomain(Cookie cookie, String serverName) {
+        int dotLevel = getAppProperties().getCookies().getDomainDotLevel();
+
+        if (dotLevel <= 0) {
+            return;
+        }
+
+        List<String> split = List.of(serverName.split("\\."));
+        if (split.size() == 1) {
+            cookie.setDomain(split.get(0));
+        } else if (split.size() > 1) {
+            List<String> parts = split.subList(Math.max(split.size() - (dotLevel + 1), 0), split.size());
+            String combined = StringUtils.join(parts, ".");
+            cookie.setDomain(combined);
+        }
     }
 
-    private static void setDomain(Cookie cookie, String serverName) {
-        if (Boolean.TRUE.equals(getAppProperties().getCookies().getStoreRoot())) {
-            // Set cookie on domain name level by default.
-            List<String> split = List.of(serverName.split("\\."));
-            if (split.size() == 1) {
-                cookie.setDomain(split.get(0));
-            } else if (split.size() > 1) {
-                List<String> lastTwo = split.subList(split.size() - 2, split.size());
-                String combined = StringUtils.join(lastTwo, ".");
-                cookie.setDomain(combined);
-            }
+    private static void setSecure(Cookie cookie) {
+        if (!"none".equalsIgnoreCase(getAppProperties().getCookies().getSameSite())) {
+            cookie.setSecure(getAppProperties().getCookies().getSecure());
+        } else {
+            cookie.setSecure(true);
         }
+    }
+
+    private static void setSameSite(Cookie cookie) {
+        cookie.setAttribute("SameSite", getAppProperties().getCookies().getSameSite());
     }
 }

@@ -30,8 +30,9 @@ public class AppProperties {
 
     @Data
     public static class Cookies {
-        private Boolean storeRoot = true;
+        private Integer domainDotLevel = 0;
         private Boolean secure = true;
+        private String sameSite = "strict";
     }
 
     @Data

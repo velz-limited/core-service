@@ -55,8 +55,11 @@ app:
     allow_credentials: true
     max_age: 10m
   cookies:
-    store_root: true
+    # Cookies domain storage level. 0 = same as request. 1 = main domain name, 2 = first subdomain, etc.
+    domain_dot_level: 1
+    # Secure will be forced to true if same site is none.
     secure: true
+    same_site: strict
   jwt:
     issuer: velz-core
     rsa_private_key: ""
