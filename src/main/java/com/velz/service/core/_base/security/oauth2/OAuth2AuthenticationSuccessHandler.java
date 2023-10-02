@@ -48,8 +48,8 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         String targetUrl = determineTargetUrl(request, tokens);
 
-        JWTHelper.addTokensToCookies(response, tokens);
-        JWTHelper.forceAddAccessTokenToCookiesNoHttpOnly(response, tokens);
+        JWTHelper.addTokensToCookies(request, response, tokens);
+        JWTHelper.forceAddAccessTokenToCookiesNoHttpOnly(request, response, tokens);
 
         SessionToken sessionToken = buildSessionToken(tokens.get(JWTType.REFRESH));
         userService.addSessionToken(user, sessionToken);

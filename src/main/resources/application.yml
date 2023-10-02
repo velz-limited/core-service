@@ -54,6 +54,9 @@ app:
     # Required to retrieve cookies, authorization headers, or TLS client certificates from cross-origin requests.
     allow_credentials: true
     max_age: 10m
+  cookies:
+    store_root: true
+    secure: true
   jwt:
     issuer: velz-core
     rsa_private_key: ""

@@ -21,3 +21,5 @@ spring:
 app:
   cors:
     allow_all_origins: true
+  cookies:
+    secure: false

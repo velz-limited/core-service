@@ -16,6 +16,7 @@ import java.util.List;
 public class AppProperties {
 
     private Cors cors = new Cors();
+    private Cookies cookies = new Cookies();
     private Jwt jwt = new Jwt();
     private OAuth2 oauth2 = new OAuth2();
 
@@ -25,6 +26,12 @@ public class AppProperties {
         private List<String> allowOrigins = new ArrayList<>();
         private Boolean allowCredentials = true;
         private Duration maxAge = Duration.ofMinutes(10);
+    }
+
+    @Data
+    public static class Cookies {
+        private Boolean storeRoot = true;
+        private Boolean secure = true;
     }
 
     @Data

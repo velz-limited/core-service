@@ -36,27 +36,28 @@ public class UserController {
     @Transactional
     @ResponseStatus(CREATED)
     @PostMapping("/sign-up")
-    public Map<String, Object> signUp(@Valid @RequestBody UserSignUpRequest request, HttpServletResponse servletResponse) {
+    public Map<String, Object> signUp(@Valid @RequestBody UserSignUpRequest request, HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
         User user = userService.signUp(request);
         Map<JWTType, String> tokens = JWTHelper.create(user);
         userService.addSessionToken(user, buildSessionToken(tokens.get(JWTType.REFRESH)));
         user.setLastSignedInAt(now());
-        return respondWithUserAndTokens(servletResponse, user, tokens);
+        return respondWithUserAndTokens(servletRequest, servletResponse, user, tokens);
     }
 
     @Transactional
     @PostMapping("/sign-in")
-    public Map<String, Object> signIn(@Valid @RequestBody UserSignInRequest request, HttpServletResponse servletResponse) {
+    public Map<String, Object> signIn(@Valid @RequestBody UserSignInRequest request, HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
         User user = userService.signIn(request);
         Map<JWTType, String> tokens = JWTHelper.create(user);
         userService.addSessionToken(user, buildSessionToken(tokens.get(JWTType.REFRESH)));
         user.setLastSignedInAt(now());
-        return respondWithUserAndTokens(servletResponse, user, tokens);
+        return respondWithUserAndTokens(servletRequest, servletResponse, user, tokens);
     }
 
     @GetMapping("/refresh-token")
     public Map<String, Object> refreshToken(
             @CookieValue(name = JWTType.SnakeName.REFRESH_TOKEN, required = false) String refreshToken,
+            HttpServletRequest servletRequest,
             HttpServletResponse servletResponse) {
 
         Jws<Claims> claims = parseClaims(refreshToken);
@@ -70,15 +71,15 @@ public class UserController {
         }
 
         Map<JWTType, String> tokens = JWTHelper.refresh(user);
-        return respondWithUserAndTokens(servletResponse, user, tokens);
+        return respondWithUserAndTokens(servletRequest, servletResponse, user, tokens);
     }
 
     private static Map<String, Object> respondWithUserAndTokens(
-            HttpServletResponse servletResponse, User user, Map<JWTType, String> tokens) {
+            HttpServletRequest servletRequest, HttpServletResponse servletResponse, User user, Map<JWTType, String> tokens) {
 
         Map<String, Object> map = new HashMap<>();
         map.put("user_details", user);
-        addTokensToCookies(servletResponse, tokens);
+        addTokensToCookies(servletRequest, servletResponse, tokens);
         addTokensToMapBody(map, tokens);
         return map;
     }
