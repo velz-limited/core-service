@@ -26,4 +26,7 @@ public class UserUpdateRequest {
     private String rawPassword;
 
     private Boolean isPrivate;
+
+    @Size(max = PROFILE_DESCRIPTION_MAX)
+    private String profileDescription;
 }

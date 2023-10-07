@@ -39,6 +39,8 @@ public class UserService {
     public static final int RAW_PASSWORD_MAX = 256;
     public static final String RAW_PASSWORD_REGEX = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[`¬!\"£$%^&*()_=+{};:'@#~<>,.?|\\-\\[\\]\\/\\\\]).{0,}$";
 
+    public static final int PROFILE_DESCRIPTION_MAX = 150;
+
     // TODO J: Set real min/max for this.
     public static final int SEND_TOKEN_MIN = 0;
     public static final int SEND_TOKEN_MAX = 50;
@@ -113,7 +115,7 @@ public class UserService {
 
     /* Granular Update */
     public void updateDisplayName(User user, String newDisplayName) {
-        if (!StringUtils.equals(user.getDisplayName(), newDisplayName)) {
+        if (StringUtils.isNotEmpty(newDisplayName) && !StringUtils.equals(user.getDisplayName(), newDisplayName)) {
             user.setDisplayName(newDisplayName);
         }
     }
@@ -155,6 +157,13 @@ public class UserService {
     public void updatePrivacy(User user, Boolean newPrivacy) {
         user.setPrivate(ofNullable(newPrivacy).orElse(false));
     }
+
+    public void updateProfileDescription(User user, String newProfileDescription) {
+        if (StringUtils.isNotEmpty(newProfileDescription)) {
+            // TODO J: Add description validations, i.e. remove links, harmful stuff, etc.
+            user.setProfileDescription(newProfileDescription);
+        }
+    }
     /* /Granular Update */
 
     /* Session Tokens */
@@ -192,6 +201,7 @@ public class UserService {
     }
 
     public void addSessionToken(User user, SessionToken sessionToken) {
+        // TODO J: Set maximum number of session tokens.
         if (sessionToken != null) {
             validateSessionToken(sessionToken);
             List<SessionToken> sessionTokens = new ArrayList<>(getActiveSessionTokens(user));
@@ -312,6 +322,7 @@ public class UserService {
         updateEmail(user, request.getEmail());
         updatePassword(user, request.getRawPassword());
         updatePrivacy(user, request.getIsPrivate());
+        updateProfileDescription(user, request.getProfileDescription());
         return user;
     }
 

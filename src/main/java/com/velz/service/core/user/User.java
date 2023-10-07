@@ -97,6 +97,9 @@ public class User extends AuditEntity implements JWTUserClaims, OAuth2User {
     @Column(name = "is_private")
     private boolean isPrivate;
 
+    @Column(name = "profile_description")
+    private String profileDescription;
+
     @Column(name = "profile_image_uri")
     private URI profileImageUri;
 

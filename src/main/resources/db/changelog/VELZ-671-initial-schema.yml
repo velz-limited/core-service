@@ -89,6 +89,9 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
+                  name: profile_description
+                  type: text
+              - column:
                   name: profile_image_uri
                   type: text
               - column:
