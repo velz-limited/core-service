@@ -1,5 +1,6 @@
 package com.velz.service.core.location.region;
 
+import com.velz.service.core.location.BoundaryType;
 import com.velz.service.core.location.country.Country;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -37,6 +38,10 @@ public class Region {
 
     @Column(name = "boundary")
     private Polygon<G2D> boundary;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "boundary_type")
+    private BoundaryType boundaryType;
 
     @Column(name = "main_image_uri")
     private URI mainImageUri;

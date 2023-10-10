@@ -1,5 +1,6 @@
 package com.velz.service.core.location.country;
 
+import com.velz.service.core.location.BoundaryType;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.geolatte.geom.G2D;
@@ -36,6 +37,10 @@ public class Country {
 
     @Column(name = "boundary")
     private Polygon<G2D> boundary;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "boundary_type")
+    private BoundaryType boundaryType;
 
     @Column(name = "flag_image_uri")
     private URI flagImageUri;

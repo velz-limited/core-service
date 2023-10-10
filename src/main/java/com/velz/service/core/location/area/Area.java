@@ -1,6 +1,7 @@
 package com.velz.service.core.location.area;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.velz.service.core.location.BoundaryType;
 import com.velz.service.core.location.region.Region;
 import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
@@ -56,6 +57,10 @@ public class Area {
 
     @Column(name = "boundary")
     private Polygon<G2D> boundary;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "boundary_type")
+    private BoundaryType boundaryType;
 
     @Column(name = "main_image_uri")
     private URI mainImageUri;

@@ -257,6 +257,9 @@ databaseChangeLog:
                   name: boundary
                   type: geography(polygon, 4326)
               - column:
+                  name: boundary_type
+                  type: text
+              - column:
                   name: flag_image_uri
                   type: text
               - column:
@@ -296,6 +299,9 @@ databaseChangeLog:
               - column:
                   name: boundary
                   type: geography(polygon, 4326)
+              - column:
+                  name: boundary_type
+                  type: text
               - column:
                   name: main_image_uri
                   type: text
@@ -355,6 +361,9 @@ databaseChangeLog:
               - column:
                   name: boundary
                   type: geography(polygon, 4326)
+              - column:
+                  name: boundary_type
+                  type: text
               - column:
                   name: main_image_uri
                   type: text
