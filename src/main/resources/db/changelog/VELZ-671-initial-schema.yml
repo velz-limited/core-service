@@ -234,6 +234,13 @@ databaseChangeLog:
                     unique: true
                     uniqueConstraintName: uq_country_name
               - column:
+                  name: alpha2_code
+                  type: char(2)
+                  constraints:
+                    nullable: false
+                    unique: true
+                    uniqueConstraintName: uq_country_alpha2_code
+              - column:
                   name: alpha3_code
                   type: char(3)
                   constraints:

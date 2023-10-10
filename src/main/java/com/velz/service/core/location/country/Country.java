@@ -23,6 +23,9 @@ public class Country {
     @Column(name = "name")
     private String name;
 
+    @Column(name = "alpha2_code")
+    private String alpha2Code;
+
     @Column(name = "alpha3_code")
     private String alpha3Code;
 
