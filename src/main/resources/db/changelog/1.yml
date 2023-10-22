@@ -1,6 +1,7 @@
 databaseChangeLog:
   - changeSet:
       id: 1
+      comment: Initial schema.
       author: mjah
       changes:
         # Users
