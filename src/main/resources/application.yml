@@ -41,6 +41,12 @@ spring:
             client-id: ""
             client-secret: ""
           # TODO J: Add Apple as OAuth2 provider.
+  data:
+    web:
+      pageable:
+        max-page-size: 300
+    rest:
+      max-page-size: ${spring.data.web.pageable.max-page-size}
 
 springdoc:
   swagger-ui:
@@ -60,6 +66,9 @@ app:
     # Secure will be forced to true if same site is none.
     secure: true
     same_site: strict
+  oauth2:
+    authorized-redirect-uris:
+      - ""
   jwt:
     issuer: velz-core
     rsa_private_key: ""
@@ -77,8 +86,3 @@ app:
         cookies: true
         # Enabling will make token vulnerable to hijacking. Use cookies (with httpOnly) instead.
         body: false
-  oauth2:
-    authorized-redirect-uris: # TODO J: Update OAuth2 authorized redirect URIs.
-      - http://localhost:3000/oauth2/redirect
-      - iosapp://oauth2/redirect
-      - androidapp://oauth2/redirect

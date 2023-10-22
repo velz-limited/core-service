@@ -1,15 +1,19 @@
 package com.velz.service.core.location.country;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.velz.service.core.location.BoundaryType;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.geolatte.geom.G2D;
-import org.geolatte.geom.Polygon;
+import org.geolatte.geom.MultiPolygon;
 import org.hibernate.annotations.Immutable;
 
 import java.net.URI;
 import java.util.UUID;
 
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @Immutable
 @Data
 @Entity
@@ -38,9 +42,11 @@ public class Country {
     @Column(name = "description")
     private String description;
 
+    @JsonIgnore
     @Column(name = "boundary")
-    private Polygon<G2D> boundary;
+    private MultiPolygon<G2D> boundary;
 
+    @JsonIgnore
     @Enumerated(EnumType.STRING)
     @Column(name = "boundary_type")
     private BoundaryType boundaryType;

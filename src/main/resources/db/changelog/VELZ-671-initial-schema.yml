@@ -262,7 +262,7 @@ databaseChangeLog:
                   type: text
               - column:
                   name: boundary
-                  type: geography(polygon, 4326)
+                  type: geography(multipolygon, 4326)
               - column:
                   name: boundary_type
                   type: text
@@ -298,24 +298,18 @@ databaseChangeLog:
               - column:
                   name: tz_identifier
                   type: text
-                  constraints:
-                    nullable: false
               - column:
                   name: description
                   type: text
               - column:
                   name: boundary
-                  type: geography(polygon, 4326)
+                  type: geography(multipolygon, 4326)
               - column:
                   name: boundary_type
                   type: text
               - column:
                   name: main_image_uri
                   type: text
-        - addUniqueConstraint:
-            constraintName: uq_region_country_name
-            tableName: region
-            columnNames: country_id, name
 
         - createTable:
             tableName: area
@@ -367,7 +361,7 @@ databaseChangeLog:
                   type: text
               - column:
                   name: boundary
-                  type: geography(polygon, 4326)
+                  type: geography(multipolygon, 4326)
               - column:
                   name: boundary_type
                   type: text
@@ -377,10 +371,6 @@ databaseChangeLog:
               - column:
                   name: hashtags
                   type: jsonb
-        - addUniqueConstraint:
-            constraintName: uq_area_region_name
-            tableName: area
-            columnNames: region_id, name
         # /Locations
 
         # Attractions

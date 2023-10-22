@@ -1,17 +1,19 @@
 package com.velz.service.core.location.region;
 
+import com.fasterxml.jackson.annotation.*;
 import com.velz.service.core.location.BoundaryType;
 import com.velz.service.core.location.country.Country;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.ToString;
 import org.geolatte.geom.G2D;
-import org.geolatte.geom.Polygon;
+import org.geolatte.geom.MultiPolygon;
 import org.hibernate.annotations.Immutable;
 
 import java.net.URI;
 import java.util.UUID;
 
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @Immutable
 @Data
 @Entity
@@ -22,6 +24,8 @@ public class Region {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @JsonIdentityReference(alwaysAsId = true)
+    @JsonProperty("country_id")
     @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "country_id")
@@ -36,9 +40,11 @@ public class Region {
     @Column(name = "description")
     private String description;
 
+    @JsonIgnore
     @Column(name = "boundary")
-    private Polygon<G2D> boundary;
+    private MultiPolygon<G2D> boundary;
 
+    @JsonIgnore
     @Enumerated(EnumType.STRING)
     @Column(name = "boundary_type")
     private BoundaryType boundaryType;

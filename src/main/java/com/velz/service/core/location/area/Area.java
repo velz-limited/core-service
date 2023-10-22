@@ -1,5 +1,6 @@
 package com.velz.service.core.location.area;
 
+import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.velz.service.core.location.BoundaryType;
 import com.velz.service.core.location.region.Region;
@@ -8,14 +9,15 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.ToString;
 import org.geolatte.geom.G2D;
+import org.geolatte.geom.MultiPolygon;
 import org.geolatte.geom.Point;
-import org.geolatte.geom.Polygon;
 import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.Type;
 
 import java.net.URI;
 import java.util.UUID;
 
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @Immutable
 @Data
 @Entity
@@ -26,6 +28,8 @@ public class Area {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @JsonIdentityReference(alwaysAsId = true)
+    @JsonProperty("region_id")
     @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "region_id")
@@ -55,9 +59,11 @@ public class Area {
     @Column(name = "night_description")
     private String nightDescription;
 
+    @JsonIgnore
     @Column(name = "boundary")
-    private Polygon<G2D> boundary;
+    private MultiPolygon<G2D> boundary;
 
+    @JsonIgnore
     @Enumerated(EnumType.STRING)
     @Column(name = "boundary_type")
     private BoundaryType boundaryType;
