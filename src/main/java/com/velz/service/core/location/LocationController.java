@@ -5,6 +5,7 @@ import com.velz.service.core.location.country.CountryService;
 import com.velz.service.core.location.region.Region;
 import com.velz.service.core.location.region.RegionService;
 import com.velz.service.core.location.response.CountrySearchResponse;
+import com.velz.service.core.location.response.FeaturesGeoJsonResponse;
 import com.velz.service.core.location.response.RegionSearchResponse;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,5 +97,25 @@ public class LocationController {
             @RequestParam(required = false) List<UUID> countryIds) {
 
         return regionService.quickSearch(query, countryIds);
+    }
+
+    @GetMapping("/geojson/country")
+    public FeaturesGeoJsonResponse geoJsonAllCountries() {
+        return countryService.getAllGeoJson();
+    }
+
+    @GetMapping("/geojson/country/{countryId}")
+    public FeaturesGeoJsonResponse geoJsonByCountry(@PathVariable UUID countryId) {
+        return countryService.getGeoJson(countryService.getById(countryId));
+    }
+
+    @GetMapping("/geojson/country/{countryId}/region")
+    public FeaturesGeoJsonResponse geoJsonAllRegionByCountry(@PathVariable UUID countryId) {
+        return regionService.getAllGeoJsonByCountry(countryService.getById(countryId));
+    }
+
+    @GetMapping("/geojson/region/{regionId}")
+    public FeaturesGeoJsonResponse geoJsonByRegion(@PathVariable UUID regionId) {
+        return regionService.getGeoJson(regionService.getById(regionId));
     }
 }

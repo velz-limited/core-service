@@ -18,6 +18,11 @@ public interface RegionRepository extends JpaRepository<Region, UUID> {
 
     @Query("SELECT r " +
             "FROM Region r " +
+            "WHERE r.country = :country")
+    List<Region> findAllByCountry(Country country);
+
+    @Query("SELECT r " +
+            "FROM Region r " +
             "WHERE is_similar(r.name, :query) " +
             "ORDER BY similarity(r.name, :query) DESC")
     Page<Region> search(String query, Pageable pageable);
