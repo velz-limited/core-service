@@ -19,6 +19,7 @@ public class AppProperties {
     private Cookies cookies = new Cookies();
     private Jwt jwt = new Jwt();
     private OAuth2 oauth2 = new OAuth2();
+    private Search search = new Search();
 
     @Data
     public static class Cors {
@@ -65,5 +66,15 @@ public class AppProperties {
     @Data
     public static class OAuth2 {
         private List<String> authorizedRedirectUris = new ArrayList<>();
+    }
+
+    @Data
+    public static class Search {
+        private Quick quick = new Quick();
+
+        @Data
+        public static class Quick {
+            private Integer maxResults = 5;
+        }
     }
 }

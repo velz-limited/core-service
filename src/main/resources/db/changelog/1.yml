@@ -4,6 +4,13 @@ databaseChangeLog:
       comment: Initial schema.
       author: mjah
       changes:
+        # Extensions
+        - sql:
+            sql: CREATE EXTENSION IF NOT EXISTS pg_trgm;
+        - sql:
+            sql: CREATE EXTENSION IF NOT EXISTS btree_gin;
+        # /Extensions
+
         # Users
         - createTable:
             tableName: users # The word 'user' is a reserved keyword in Postgres, using 'users' instead.
@@ -273,6 +280,12 @@ databaseChangeLog:
               - column:
                   name: main_image_uri
                   type: text
+        - sql:
+            sql: CREATE INDEX ix_country_name ON country USING gin(name)
+        - sql:
+            sql: CREATE INDEX ix_country_alpha2_code ON country USING gin(alpha2_code)
+        - sql:
+            sql: CREATE INDEX ix_country_alpha3_code ON country USING gin(alpha3_code)
 
         - createTable:
             tableName: region
@@ -311,6 +324,8 @@ databaseChangeLog:
               - column:
                   name: main_image_uri
                   type: text
+        - sql:
+            sql: CREATE INDEX ix_region_name ON region USING gin(name)
 
         - createTable:
             tableName: area
@@ -372,6 +387,8 @@ databaseChangeLog:
               - column:
                   name: hashtags
                   type: jsonb
+        - sql:
+            sql: CREATE INDEX ix_area_name ON area USING gin(name)
         # /Locations
 
         # Attractions

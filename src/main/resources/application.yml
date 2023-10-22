@@ -86,3 +86,6 @@ app:
         cookies: true
         # Enabling will make token vulnerable to hijacking. Use cookies (with httpOnly) instead.
         body: false
+  search:
+    quick:
+      max_results: 5
