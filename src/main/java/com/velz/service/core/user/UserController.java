@@ -33,9 +33,10 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    /* Auth */
     @Transactional
     @ResponseStatus(CREATED)
-    @PostMapping("/sign-up")
+    @PostMapping("/auth/sign-up")
     public Map<String, Object> signUp(@Valid @RequestBody UserSignUpRequest request, HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
         User user = userService.signUp(request);
         Map<JWTType, String> tokens = JWTHelper.create(user);
@@ -45,7 +46,7 @@ public class UserController {
     }
 
     @Transactional
-    @PostMapping("/sign-in")
+    @PostMapping("/auth/sign-in")
     public Map<String, Object> signIn(@Valid @RequestBody UserSignInRequest request, HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
         User user = userService.signIn(request);
         Map<JWTType, String> tokens = JWTHelper.create(user);
@@ -54,7 +55,7 @@ public class UserController {
         return respondWithUserAndTokens(servletRequest, servletResponse, user, tokens);
     }
 
-    @GetMapping("/refresh-token")
+    @GetMapping("/auth/refresh-token")
     public Map<String, Object> refreshToken(
             @CookieValue(name = JWTType.SnakeName.REFRESH_TOKEN, required = false) String refreshToken,
             HttpServletRequest servletRequest,
@@ -85,7 +86,7 @@ public class UserController {
     }
 
     @Transactional
-    @GetMapping("/sign-out")
+    @GetMapping("/auth/sign-out")
     public void signOut(
             @AuthenticationPrincipal UUID id,
             @CookieValue(name = JWTType.SnakeName.REFRESH_TOKEN, required = false) String refreshToken,
@@ -97,50 +98,51 @@ public class UserController {
     }
 
     @Transactional
-    @GetMapping("/sign-out-all")
+    @GetMapping("/auth/sign-out-all")
     public void signOutAll(@AuthenticationPrincipal UUID id, HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
         userService.signOutAll(userService.getById(id));
         deleteTokensFromCookies(servletRequest, servletResponse);
     }
 
     @Transactional
-    @PutMapping("/email-verification")
+    @PutMapping("/auth/email-verification")
     public void emailVerification(@Valid @RequestBody UserEmailVerificationRequest request) {
         userService.emailVerification(request);
     }
 
     @Transactional
-    @PostMapping("/send-email-verification")
+    @PostMapping("/auth/send-email-verification")
     public void sendEmailVerification(@Valid @RequestBody UserSendEmailVerificationRequest request) {
         userService.sendEmailVerification(request);
     }
 
     @Transactional
-    @PutMapping("/password-reset")
+    @PutMapping("/auth/password-reset")
     public void passwordReset(@Valid @RequestBody UserResetPasswordRequest request) {
         userService.passwordReset(request);
     }
 
     @Transactional
-    @PostMapping("/send-password-reset")
+    @PostMapping("/auth/send-password-reset")
     public void sendPasswordReset(@Valid @RequestBody UserSendPasswordResetRequest request) {
         userService.sendPasswordReset(request);
     }
 
-    @GetMapping("/details")
+    @GetMapping("/auth/details")
     public User get(@AuthenticationPrincipal UUID id) {
         return userService.getById(id);
     }
 
     @Transactional
-    @PutMapping("/update")
+    @PutMapping("/auth/update")
     public User update(@AuthenticationPrincipal UUID id, @Valid @RequestBody UserUpdateRequest request) {
         return userService.update(userService.getById(id), request);
     }
 
     @Transactional
-    @DeleteMapping("/delete")
+    @DeleteMapping("/auth/delete")
     public void delete(@AuthenticationPrincipal UUID id) {
         userService.delete(userService.getById(id));
     }
+    /* /Auth */
 }

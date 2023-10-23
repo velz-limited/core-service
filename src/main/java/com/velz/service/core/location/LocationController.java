@@ -38,7 +38,7 @@ public class LocationController {
     @Autowired
     private RegionService regionService;
 
-    /* Get */
+    /* Country */
     @GetMapping("/country")
     public Page<Country> getAllCountries(
             @ParameterObject
@@ -47,6 +47,21 @@ public class LocationController {
             @SortDefault(sort = "alpha3Code", direction = Sort.Direction.ASC)
             Pageable pageable) {
         return countryService.getAll(pageable);
+    }
+
+    @GetMapping("/country/geojson")
+    public ResponseEntity<FeaturesGeoJsonResponse> geoJsonAllCountries() {
+        return ok().cacheControl(GEO_JSON_CACHE_CONTROL).body(countryService.getAllGeoJson());
+    }
+
+    @GetMapping("/country/{countryId}")
+    public Country getCountry(@PathVariable UUID countryId) {
+        return countryService.getById(countryId);
+    }
+
+    @GetMapping("/country/{countryId}/geojson")
+    public ResponseEntity<FeaturesGeoJsonResponse> geoJsonByCountry(@PathVariable UUID countryId) {
+        return ok().cacheControl(GEO_JSON_CACHE_CONTROL).body(countryService.getGeoJson(countryService.getById(countryId)));
     }
 
     @GetMapping("/country/{countryId}/region")
@@ -59,19 +74,12 @@ public class LocationController {
         return regionService.getAllByCountry(countryService.getById(countryId), pageable);
     }
 
-    @GetMapping("/country/{countryId}")
-    public Country getCountry(@PathVariable UUID countryId) {
-        return countryService.getById(countryId);
+    @GetMapping("/country/{countryId}/region/geojson")
+    public ResponseEntity<FeaturesGeoJsonResponse> geoJsonAllRegionByCountry(@PathVariable UUID countryId) {
+        return ok().cacheControl(GEO_JSON_CACHE_CONTROL).body(regionService.getAllGeoJsonByCountry(countryService.getById(countryId)));
     }
 
-    @GetMapping("/region/{regionId}")
-    public Region getRegion(@PathVariable UUID regionId) {
-        return regionService.getById(regionId);
-    }
-    /* /Get */
-
-    /* Search */
-    @GetMapping("/search/paged/country/{query}")
+    @GetMapping("/country/search/paged/{query}")
     public ResponseEntity<Page<Country>> searchCountry(
             @ParameterObject
             @PageableDefault(size = 50)
@@ -83,7 +91,26 @@ public class LocationController {
         return ok().cacheControl(SEARCH_CACHE_CONTROL).body(countryService.search(query, pageable));
     }
 
-    @GetMapping("/search/paged/region/{query}")
+    @GetMapping("/country/search/quick/{query}")
+    public ResponseEntity<List<CountrySearchResponse>> quickSearchCountry(
+            @PathVariable String query) {
+
+        return ok().cacheControl(SEARCH_CACHE_CONTROL).body(countryService.quickSearch(query));
+    }
+    /* /Country */
+
+    /* Region */
+    @GetMapping("/region/{regionId}")
+    public Region getRegion(@PathVariable UUID regionId) {
+        return regionService.getById(regionId);
+    }
+
+    @GetMapping("/region/{regionId}/geojson")
+    public ResponseEntity<FeaturesGeoJsonResponse> geoJsonByRegion(@PathVariable UUID regionId) {
+        return ok().cacheControl(GEO_JSON_CACHE_CONTROL).body(regionService.getGeoJson(regionService.getById(regionId)));
+    }
+
+    @GetMapping("/region/search/paged/{query}")
     public ResponseEntity<Page<Region>> searchRegion(
             @ParameterObject
             @PageableDefault(size = 50)
@@ -95,41 +122,12 @@ public class LocationController {
         return ok().cacheControl(SEARCH_CACHE_CONTROL).body(regionService.search(query, countryIds, pageable));
     }
 
-    @GetMapping("/search/quick/country/{query}")
-    public ResponseEntity<List<CountrySearchResponse>> quickSearchCountry(
-            @PathVariable String query) {
-
-        return ok().cacheControl(SEARCH_CACHE_CONTROL).body(countryService.quickSearch(query));
-    }
-
-    @GetMapping("/search/quick/region/{query}")
+    @GetMapping("/region/search/quick/{query}")
     public ResponseEntity<List<RegionSearchResponse>> quickSearchRegion(
             @PathVariable String query,
             @RequestParam(required = false) List<UUID> countryIds) {
 
         return ok().cacheControl(SEARCH_CACHE_CONTROL).body(regionService.quickSearch(query, countryIds));
     }
-    /* /Search */
-
-    /* GeoJson */
-    @GetMapping("/geojson/country")
-    public ResponseEntity<FeaturesGeoJsonResponse> geoJsonAllCountries() {
-        return ok().cacheControl(GEO_JSON_CACHE_CONTROL).body(countryService.getAllGeoJson());
-    }
-
-    @GetMapping("/geojson/country/{countryId}")
-    public ResponseEntity<FeaturesGeoJsonResponse> geoJsonByCountry(@PathVariable UUID countryId) {
-        return ok().cacheControl(GEO_JSON_CACHE_CONTROL).body(countryService.getGeoJson(countryService.getById(countryId)));
-    }
-
-    @GetMapping("/geojson/country/{countryId}/region")
-    public ResponseEntity<FeaturesGeoJsonResponse> geoJsonAllRegionByCountry(@PathVariable UUID countryId) {
-        return ok().cacheControl(GEO_JSON_CACHE_CONTROL).body(regionService.getAllGeoJsonByCountry(countryService.getById(countryId)));
-    }
-
-    @GetMapping("/geojson/region/{regionId}")
-    public ResponseEntity<FeaturesGeoJsonResponse> geoJsonByRegion(@PathVariable UUID regionId) {
-        return ok().cacheControl(GEO_JSON_CACHE_CONTROL).body(regionService.getGeoJson(regionService.getById(regionId)));
-    }
-    /* /GeoJson */
+    /* /Region */
 }
